@@ -1,7 +1,8 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QPixmap, QImage
-from PyQt5 import uic
+from PyQt5 import QtCore, uic
+from PyQt5.uic.properties import QtGui
 import numpy as np
 import cv2
 import dlib
@@ -19,6 +20,8 @@ class WindowClass(QMainWindow, form_class):
         super().__init__()
         self.setupUi(self)
 
+        self.label: QLabel
+
         self.check_neko_ears:  QCheckBox
         self.check_sunglass:   QCheckBox
 
@@ -34,6 +37,7 @@ class WindowClass(QMainWindow, form_class):
         fname = QFileDialog.getSaveFileName(self, 'Save file', './')
         filepath = fname[0]
         print(filepath)
+        # TODO: Save a frame as an image file
 
 
 video_capture = cv2.VideoCapture(0)
@@ -66,7 +70,8 @@ def show():
 
         qImg = QImage(np.array(frame[:, :, ::-1]),
                       w, h, w*c, QImage.Format_RGB888)
-        main_form.label.setPixmap(QPixmap.fromImage(qImg))
+        main_form.label.setPixmap(QPixmap.fromImage(qImg).scaled(main_form.label.size().width(), main_form.label.size().height(), 
+                                                                 aspectRatioMode=QtCore.Qt.KeepAspectRatio))
 
 
 if __name__ == "__main__":
